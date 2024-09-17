@@ -1,4 +1,4 @@
-require('dotenv').config();
+require('dotenv').config({path: "../.env"});
 const express = require('express');
 const mysql = require('mysql');
 const uuid = require('uuid');
@@ -7,7 +7,6 @@ const CryptoJS = require("crypto-js");
 const moment = require('moment');
 
 const app = express();
-const port = process.env.PORT;
 const passwdRegExp = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
 
 app.use(cors());
@@ -24,4 +23,8 @@ let pool = mysql.createPool({
 
 app.get('/', (req, res) => {
   res.send(`MR + ME Backend`);
+});
+
+app.listen(process.env.PORT, () => {
+  console.log(`Server is listening on port ${process.env.PORT}`);
 });
