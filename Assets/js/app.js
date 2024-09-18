@@ -7,3 +7,11 @@ function logOut()
 {
     
 };
+
+function register() {
+    
+};
+
+function login() {
+    
+};

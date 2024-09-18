@@ -28,3 +28,72 @@ app.get('/', (req, res) => {
 app.listen(process.env.PORT, () => {
   console.log(`Server is listening on port ${process.env.PORT}`);
 });
+
+//user registration
+app.post('/reg', (req, res) => {
+  
+  if (!req.body.name || !req.body.email || !req.body.passwd || !req.body.confirm) {
+    res.status(203).send('You did not provide all the required information!');
+    return;
+  }
+
+  if (req.body.passwd != req.body.confirm) {
+    res.status(203).send('Passwords are not matching!');
+    return;
+  }
+
+  if (!req.body.passwd.match(passwdRegExp)) {
+    res.status(203).send('The password is not safe enough!');
+    return;
+  }
+
+  pool.query(`SELECT * FROM users WHERE email = '${req.body.email}'`, (err, results) => {
+    
+    if (err) {
+      res.status(500).send("An error occurred while accessing the database!");
+      return;
+    }
+
+    if (results.length != 0) {
+      res.status(203).send('This email address is already registerd');
+      return;
+    }
+
+    pool.query(`INSERT INTO users VALUES('${uuid.v4()}', '${req.body.name}', '${req.body.email}', '${req.body.phone}', 'user', '1', SHA1('${req.body.passwd}'))`, (err, results) => {
+      
+      if (err) {
+        res.status(500).send("An error occurred while accessing the database!");
+        return;
+      }
+      res.status(200).send('Successful registration!');
+      return;
+    });
+    return;
+  });
+});
+
+//user login
+app.post('/login', (req, res) => {
+  
+  if (!req.body.email || !req.body.passwd) {
+    res.status(203).send('Missing fields!');
+    return;
+  }
+
+  pool.query(`SELECT email, password FROM users WHERE email = '${req.body.email}' AND password = '${CryptoJS.SHA1(req.body.passwd)}'`, (err, results) => {
+
+    if (err) {
+      res.status(500).send("An error occurred while accessing the database!");
+      return;
+    }
+
+    if (results.length == 0){
+      res.status(203).send('Wrong email or password!');
+      return;
+    }
+
+    res.status(200).send('Successfully logged in!');
+      return;
+    });
+    return;
+});
