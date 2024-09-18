@@ -80,13 +80,20 @@ app.post('/login', (req, res) => {
     return;
   }
 
-  pool.query(`SELECT name, email, password, role FROM users WHERE email = '${req.body.email}' AND password = '${CryptoJS.SHA1(req.body.passwd)}'`, (err, results) => {
+
+  pool.query(`SELECT name, email, password, status, role FROM users WHERE email = '${req.body.email}' AND password = '${CryptoJS.SHA1(req.body.passwd)}'`, (err, results) => {
+
+  
 
     if (err) {
       res.status(500).send("An error occurred while accessing the database!");
       return;
     }
 
+    if (results[0].status == 0) {
+      res.status(203).send('You are considered an inactive user!');
+      return;
+    }
     if (results.length == 0){
       res.status(203).send('Wrong email or password!');
       return;
@@ -96,4 +103,54 @@ app.post('/login', (req, res) => {
       return;
     });
     return;
+});
+
+//user profile editing
+app.patch('/profile/:id', (req, res) => {
+
+  if (!req.params.id) {
+    res.status(203).send('Missing identifier!');
+    return;
+  }
+
+  if (!req.body.newname || !req.body.newemail || !req.body.oldpasswd || !req.body.newpasswd || !req.body.confirmpasswd) {
+    res.status(203).send('Missing fields!');
+    return;
+  }
+
+  if (req.body.newpasswd != req.body.confirmpasswd) {
+    res.status(203).send('The given passwords are not matching');
+    return;
+  }
+
+  pool.query(`SELECT password FROM users WHERE id='${req.params.id}'`, (err, results) => {
+    if (err){
+      res.status(500).send('An error occurred while accessing the database!');
+      return;
+    }
+
+    if (results.length == 0) {
+      res.status(203).send('Wrong idenrifier');
+      return;
+    }
+
+    if (results[0].password != CryptoJS.SHA1(req.body.oldpasswd)) {
+        res.status(203).send('The current password is wrong!')
+        return;
+    }
+
+    pool.query(`UPDATE users SET name = '${req.body.newname}', email = '${req.body.newemail}', password = SHA1('${req.body.newpasswd}') WHERE id = '${req.params.id}'`, (err, results) => {
+      if (err) {
+        res.status(500).send('An error occurred while accessing the database!');
+        return;
+      }
+
+      if (results.affectedRows == 0) {
+        res.status(203).send('Wrong identifier');
+        return;
+      }
+
+      res.status(200).send('Profile datas are modified')
+    });
+  });
 });
