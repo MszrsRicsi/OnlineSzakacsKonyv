@@ -25,9 +25,7 @@ app.get('/', (req, res) => {
   res.send(`MR + ME Backend`);
 });
 
-app.listen(process.env.PORT, () => {
-  console.log(`Server is listening on port ${process.env.PORT}`);
-});
+
 
 //user registration
 app.post('/reg', (req, res) => {
@@ -83,19 +81,18 @@ app.post('/login', (req, res) => {
 
   pool.query(`SELECT name, email, password, status, role FROM users WHERE email = '${req.body.email}' AND password = '${CryptoJS.SHA1(req.body.passwd)}'`, (err, results) => {
 
-  
-
     if (err) {
       res.status(500).send("An error occurred while accessing the database!");
       return;
     }
 
-    if (results[0].status == 0) {
-      res.status(203).send('You are considered an inactive user!');
-      return;
-    }
     if (results.length == 0){
       res.status(203).send('Wrong email or password!');
+      return;
+    }
+
+    if (results[0].status == 0) {
+      res.status(203).send('You are considered an inactive user!');
       return;
     }
 
@@ -153,4 +150,8 @@ app.patch('/profile/:id', (req, res) => {
       res.status(200).send('Profile datas are modified')
     });
   });
+});
+
+app.listen(process.env.PORT, () => {
+  console.log(`Server is listening on port ${process.env.PORT}`);
 });

@@ -42,7 +42,13 @@ function renderNavItems(){
                 item.classList.remove('d-none');
             });
         }
+        else{
+            admNavItems.forEach(item => {
+                item.classList.add('d-none');
+            });
+        }
     }
+    document.querySelector('#profile').innerHTML = loggedUser[0].name;
 };
 
 function logOut()
@@ -51,6 +57,7 @@ function logOut()
     loggedUser = null;
     renderNavItems();
     render('login');
+    document.querySelector('#profile').innerHTML = "";
 };
 
 function register()
@@ -58,6 +65,7 @@ function register()
     let newUser = {
         name: document.querySelector('#name').value,
         email: document.querySelector('#email').value,
+        phone: document.querySelector('#phone').value,
         passwd: document.querySelector('#passwd').value,
         confirm: document.querySelector('#confirm').value
     }
@@ -65,6 +73,12 @@ function register()
     axios.post(`${serverUrl}/reg`, newUser).then(res => {
         alert(res.data);
     });
+
+    document.querySelector('#name').innerHTML="";
+    document.querySelector('#email').innerHTML="";
+    document.querySelector('#passwd').innerHTML="";
+    document.querySelector('#confirm').innerHTML="";
+    render('login')
 };
 
 function login()
