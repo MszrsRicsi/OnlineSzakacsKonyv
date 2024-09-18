@@ -80,7 +80,7 @@ app.post('/login', (req, res) => {
     return;
   }
 
-  pool.query(`SELECT email, password FROM users WHERE email = '${req.body.email}' AND password = '${CryptoJS.SHA1(req.body.passwd)}'`, (err, results) => {
+  pool.query(`SELECT name, email, password, role FROM users WHERE email = '${req.body.email}' AND password = '${CryptoJS.SHA1(req.body.passwd)}'`, (err, results) => {
 
     if (err) {
       res.status(500).send("An error occurred while accessing the database!");
@@ -92,7 +92,7 @@ app.post('/login', (req, res) => {
       return;
     }
 
-    res.status(200).send('Successfully logged in!');
+    res.status(202).send(results);
       return;
     });
     return;
