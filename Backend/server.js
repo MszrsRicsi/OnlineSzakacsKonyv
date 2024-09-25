@@ -127,7 +127,7 @@ app.patch('/profile/:id', (req, res) => {
     }
 
     if (results.length == 0) {
-      res.status(203).send('Wrong idenrifier');
+      res.status(203).send('Wrong identifier');
       return;
     }
 
@@ -147,11 +147,62 @@ app.patch('/profile/:id', (req, res) => {
         return;
       }
 
-      res.status(200).send('Profile datas are modified')
+      res.status(200).send('Profile datas are modified');
+      return;
     });
   });
 });
 
+//get recipes
+app.get('/recipes', (req, res) => {
+  pool.query(`SELECT * FROM recipes`, (err, results) => {
+    if (err) {
+      res.status(500).send("An error occurred while accessing the database!");
+      return;
+    }
+
+    res.status(202).send(results);
+    return;
+  });
+});
+
+app.get('/categories', (req, res) => {
+  pool.query(`SELECT * FROM categories`, (err, results) => {
+    if (err) {
+      res.status(500).send("An error occurred while accessing the database!");
+      return;
+    }
+
+    res.status(202).send(results);
+    return;
+  });
+});
+
+app.get('/categories/:id', (req, res) => {
+  pool.query(`SELECT * FROM categories WHERE id = '${req.params.id}'`, (err, results) => {
+    if (err) {
+      res.status(500).send("An error occurred while accessing the database!");
+      return;
+    }
+    
+    res.status(202).send(results);
+    return;
+  });
+});
+
+app.post("/upload/:userID", (req, res) => {
+  pool.query(`INSERT INTO recipes VALUES ('${req.body.category}', '${req.params.userID}', '${req.body.title}', '', '${req.body.time}', '${req.body.additions}'. '${req.body.calories}')`, (err, results) => {
+    if (err) {
+      res.status(500).send("An error occurred while accessing the database!");
+      res.send(err);
+      return;
+    }
+    res.status(200).send('Added recipe!');
+    return;
+  });
+});
+
 app.listen(process.env.PORT, () => {
-  console.log(`Server is listening on port ${process.env.PORT}`);
+  console.clear();
+  console.log(`Server is listening on port ${process.env.PORT}.`);
 });

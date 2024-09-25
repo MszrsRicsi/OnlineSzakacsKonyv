@@ -1,1 +1,45 @@
-<h1>Recipes</h1>
+<h1 class="mt-3">Recipes</h1>
+
+<div class="accordion p-3" id="accordionExample">
+    <div class="accordion-item">
+        <h2 class="accordion-header">
+        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+          New recipe
+        </button>
+        </h2>
+        <div id="collapseOne" class="accordion-collapse collapse show" data-bs-parent="#accordionExample">
+            <div class="accordion-body">
+                <div class="form-floating mb-3">
+                    <input type="text" class="form-control" id="title" placeholder="Title">
+                    <label for="title">Title</label>
+                </div>
+            
+                <div class="form-floating mb-3">
+                    <input type="text" class="form-control" id="category" placeholder="Category">
+                    <label for="category">Category</label>
+                </div>
+            
+                <div class="form-floating mb-3">
+                    <input type="text" class="form-control" id="time" placeholder="Time">
+                    <label for="time">Time</label>
+                </div>
+            
+                <div class="form-floating mb-3">
+                    <input type="text" class="form-control" id="calories" placeholder="Calories">
+                    <label for="calories">Calories</label>
+                </div>
+            
+                <div class="form-floating mb-3">
+                    <input type="text" class="form-control" id="additions" placeholder="Additions">
+                    <label for="additions">Additions</label>
+                </div>
+            
+                <button class="btn btn-primary mb-3" onclick="addRecipe()">Upload</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="recipesContainer">
+
+</div>
