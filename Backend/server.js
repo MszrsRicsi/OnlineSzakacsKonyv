@@ -79,7 +79,7 @@ app.post('/login', (req, res) => {
   }
 
 
-  pool.query(`SELECT name, email, password, status, role FROM users WHERE email = '${req.body.email}' AND password = '${CryptoJS.SHA1(req.body.passwd)}'`, (err, results) => {
+  pool.query(`SELECT id, name, email, password, status, role FROM users WHERE email = '${req.body.email}' AND password = '${CryptoJS.SHA1(req.body.passwd)}'`, (err, results) => {
 
     if (err) {
       res.status(500).send("An error occurred while accessing the database!");
@@ -190,13 +190,19 @@ app.get('/categories/:id', (req, res) => {
   });
 });
 
-app.post("/upload/:userID", (req, res) => {
-  pool.query(`INSERT INTO recipes VALUES ('${req.body.category}', '${req.params.userID}', '${req.body.title}', '', '${req.body.time}', '${req.body.additions}'. '${req.body.calories}')`, (err, results) => {
+app.post("/upload", (req, res) => {
+  if (!req.body.category || !req.body.title || !req.body.time || !req.body.additions || !req.body.calories)
+  {
+    res.status(203).send("Missing fields!");
+    return;
+  };
+
+  pool.query(`INSERT INTO recipes VALUES ('', '${req.body.category}', '${req.body.userID}', '${req.body.title}', '', '${req.body.time}', '${req.body.additions}', '${req.body.calories}')`, (err, results) => {
     if (err) {
       res.status(500).send("An error occurred while accessing the database!");
-      res.send(err);
       return;
     }
+
     res.status(200).send('Added recipe!');
     return;
   });

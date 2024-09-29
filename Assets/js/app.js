@@ -10,6 +10,7 @@ async function render(view){
     {
         case "recipes":
             getRecipes();
+            toggleAddRecipeVisibility();
             break;
     }
 };
@@ -55,6 +56,7 @@ function renderNavItems(){
             });
         }
     }
+
     document.querySelector('#profile').innerHTML = loggedUser[0].name;
 };
 
@@ -119,3 +121,17 @@ else
 };
 
 renderNavItems();
+
+function toggleAddRecipeVisibility()
+{
+    let newRecipe = document.querySelector("#newRecipe");
+
+    if (loggedUser == null)
+    {
+        newRecipe.classList.add("d-none");
+    }
+    else
+    {
+        newRecipe.classList.remove("d-none");
+    }
+}

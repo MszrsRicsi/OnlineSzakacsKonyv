@@ -5,8 +5,9 @@ function getRecipes()
             CreateRecipeCards(res.data[i]);
         }
     });
-
-}
+    
+    getCategories();
+};
 
 function CreateRecipeCards(data)
 {   
@@ -71,7 +72,48 @@ function CreateRecipeCards(data)
     container.appendChild(card);
 };
 
+function getCategories()
+{
+    let categories = document.getElementById("category");
+    categories.innerHTML = "";
+    let selectText = document.createElement("option")
+    selectText.innerText = "Select a category..";
+    categories.appendChild(selectText);
+
+    axios.get(`${serverUrl}/categories`).then(res => {
+        res.data.forEach(item => {
+            let option = document.createElement("option");
+            option.innerHTML = item.name;
+            option.value = item.id;
+            categories.appendChild(option);
+        });
+    });
+};
+
 function addRecipe()
 {
-    //axios.post(`${serverUrl}/upload`);
-}
+    if (document.querySelector("#category").selectedIndex == 0)
+    {
+        alert("Missing fields!");
+        return;
+    }
+
+    let recipe = {
+        userID: loggedUser[0].id,
+        title: document.querySelector("#title").value,
+        category: document.querySelector("#category").value,
+        time: document.querySelector("#time").value,
+        calories: document.querySelector("#calories").value,
+        additions: document.querySelector("#additions").value
+    };
+
+    axios.post(`${serverUrl}/upload`, recipe).then(res => {
+        alert(res.data);
+
+        if(res.status == 200)
+        {
+            document.querySelector(".recipesContainer").innerHTML = "";
+            getRecipes();
+        }
+    });
+};
