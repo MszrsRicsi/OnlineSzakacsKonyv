@@ -219,6 +219,7 @@ app.get('/recipes', (req, res) => {
   });
 });
 
+//get all categories
 app.get('/categories', (req, res) => {
   pool.query(`SELECT * FROM categories`, (err, results) => {
     if (err) {
@@ -231,18 +232,26 @@ app.get('/categories', (req, res) => {
   });
 });
 
-app.get('/categories/:id', (req, res) => {
-  pool.query(`SELECT * FROM categories WHERE id = '${req.params.id}'`, (err, results) => {
+//get one category by id
+app.post('/category', (req, res) => {
+  if (!req.body.id)
+  {
+    res.status(203).send("Missing indentifier!");
+    return;
+  }
+
+  pool.query(`SELECT * FROM categories WHERE id = '${req.body.id}'`, (err, results) => {
     if (err) {
       res.status(500).send("An error occurred while accessing the database!");
       return;
     }
-    
+
     res.status(202).send(results);
     return;
   });
 });
 
+//upload new recipe
 app.post("/upload", (req, res) => {
   if (!req.body.category || !req.body.title || !req.body.time || !req.body.additions || !req.body.calories)
   {
@@ -257,6 +266,19 @@ app.post("/upload", (req, res) => {
     }
 
     res.status(200).send('Added recipe!');
+    return;
+  });
+});
+
+//get all users
+app.get("/users", (req, res) => {
+  pool.query(`SELECT id, name, role, status FROM users`, (err, results) => {
+    if (err) {
+      res.status(500).send("An error occurred while accessing the database!");
+      return;
+    }
+
+    res.status(202).send(results);
     return;
   });
 });

@@ -12,6 +12,9 @@ async function render(view){
             getRecipes();
             toggleAddRecipeVisibility();
             break;
+        case "users":
+            showUsers();
+            break;
     }
 };
 

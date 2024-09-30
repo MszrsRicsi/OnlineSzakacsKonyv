@@ -36,14 +36,12 @@ function CreateRecipeCards(data)
 
     title.innerHTML = data.title;
 
-    axios.get(`${serverUrl}/categories`).then(res => {
-        for (let i = 0; i < res.data.length; i++) {
-            if (res.data[i].id == data.catID)
-            {
-                categoryTitle.innerHTML = res.data[i].name;
-                break;
-            }
-        }
+    let category = {
+        id: data.catID
+    }
+
+    axios.post(`${serverUrl}/category`, category).then(res => {
+        categoryTitle.innerHTML = res.data[0].name;
     });
 
     headerTitle.appendChild(title);
