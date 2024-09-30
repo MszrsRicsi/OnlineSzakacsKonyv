@@ -102,21 +102,26 @@ app.post('/login', (req, res) => {
     return;
 });
 
-//user profile editing
-app.patch('/profile/:id', (req, res) => {
+//user profile editing (password)
+app.patch('/passwd/:id', (req, res) => {
 
   if (!req.params.id) {
     res.status(203).send('Missing identifier!');
     return;
   }
 
-  if (!req.body.newname || !req.body.newemail || !req.body.oldpasswd || !req.body.newpasswd || !req.body.confirmpasswd) {
+  if (!req.body.oldpasswd || !req.body.newpasswd || !req.body.confirmpasswd) {
     res.status(203).send('Missing fields!');
     return;
   }
 
   if (req.body.newpasswd != req.body.confirmpasswd) {
     res.status(203).send('The given passwords are not matching');
+    return;
+  }
+
+  if (!req.body.newpasswd.match(passwdRegExp)){
+    res.status(203).send('The new password is not safe enough')
     return;
   }
 
@@ -136,7 +141,7 @@ app.patch('/profile/:id', (req, res) => {
         return;
     }
 
-    pool.query(`UPDATE users SET name = '${req.body.newname}', email = '${req.body.newemail}', password = SHA1('${req.body.newpasswd}') WHERE id = '${req.params.id}'`, (err, results) => {
+    pool.query(`UPDATE users SET password = SHA1('${req.body.newpasswd}') WHERE id = '${req.params.id}'`, (err, results) => {
       if (err) {
         res.status(500).send('An error occurred while accessing the database!');
         return;
@@ -147,9 +152,57 @@ app.patch('/profile/:id', (req, res) => {
         return;
       }
 
-      res.status(200).send('Profile datas are modified');
+      res.status(200).send('Password is modified');
       return;
     });
+  });
+});
+
+//user profile editing (phone)
+app.patch('/phone/:id', (req, res)=>{
+
+  if (!req.params.id) {
+    res.status(203).send('Missing identifier!');
+    return;
+  }
+
+  pool.query(`UPDATE users SET phone = ${req.body.newphone} WHERE id = '${req.params.id}'`, (err, results) => {
+    if (err) {
+      res.status(500).send('An error occurred while accessing the database!');
+      return;
+    }
+    
+    if (results.affectedRows == 0) {
+      res.status(203).send('Wrong identifier');
+      return;
+    }
+
+    res.status(200).send('Phone number is modified');
+    return;
+  });
+});
+
+//user profile editing (email)
+app.patch('/email/:id', (req, res) => {
+  
+  if (!req.params.id) {
+    res.status(203).send('Missing identifier!');
+    return;
+  }
+
+  pool.query(`UPDATE users SET email = '${req.body.newemail}' WHERE id = '${req.params.id}'`, (err, results) => {
+    if (err) {
+      res.status(500).send('An error occurred while accessing the database!');
+      return;
+    }
+    
+    if (results.affectedRows == 0) {
+      res.status(203).send('Wrong identifier');
+      return;
+    }
+
+    res.status(200).send('Email address is modified');
+    return;
   });
 });
 
