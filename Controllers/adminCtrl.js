@@ -1,6 +1,7 @@
 function showUsers()
 {
     let tbody = document.querySelector("tbody");
+    tbody.innerHTML = "";
 
     axios.get(`${serverUrl}/users`).then(res => {
         res.data.forEach(user => {
@@ -13,7 +14,7 @@ function showUsers()
             td2.innerHTML = user.role;
             let td3 = document.createElement("td");
             td3.classList.add("text-center");
-            td3.innerHTML = user.status;
+            td3.innerHTML = SwitchOnStatus(user.status);
 
             let td4 = document.createElement("td");
             td4.classList.add("text-end");
@@ -25,7 +26,7 @@ function showUsers()
                 modifyBTN.innerHTML = "Modify";
                 modifyBTN.setAttribute("data-bs-toggle", "modal");
                 modifyBTN.setAttribute("data-bs-target", "#exampleModal");
-                modifyBTN.onclick = function() {ModifyModal(user)};
+                modifyBTN.onclick = function() {ModifyPopUp(user)};
     
                 let deleteBTN = document.createElement("button");
                 deleteBTN.classList.add("btn", "btn-danger");
@@ -45,18 +46,64 @@ function showUsers()
     });
 }
 
-function ModifyModal(user)
+function ModifyPopUp(user)
 {
-    let modifiyBTN = document.querySelector("#modifyBTN");
-    modifiyBTN.onclick = function() {document.querySelector("#exampleModal").modal()};
+    console.log(user.role);
+    document.querySelector("#roleModal").value = user.role;
+    document.querySelector("#statusModal").value = user.status;
+
+    document.querySelector("#modalSaveBTN").onclick = function() {Modify(user)};
+
 }
 
-function Modify()
+function Modify(user)
 {
+    let newDatas = {
+        newrole: SwitchOnRole(document.querySelector("#roleModal").selectedIndex),
+        newstatus: document.querySelector("#statusModal").value
+    };
 
+    axios.patch(`${serverUrl}/users/${user.id}`, newDatas).then(res => {
+        alert(res.data);
+        
+        if (res.status == 202)
+        {
+            showUsers();
+        }
+    });
 }
 
 function Delete(user)
 {
-    console.log(user.id);
+    if (confirm("Are you sure?"))
+    {
+        axios.delete(`${serverUrl}/users/${user.id}`).then(res => {
+            alert(res.data);
+
+            if (res.status == 202)
+            {
+                showUsers();
+            }
+        });
+    }
+}
+
+function SwitchOnStatus(status)
+{
+    switch (status)
+    {
+        case 1: return "Enabled";
+        case 0: return "Disabled";
+        default: return "Enabled";
+    }
+}
+
+function SwitchOnRole(roleIndex)
+{
+    switch (roleIndex)
+    {
+        case 0: return "admin";
+        case 1: return "user";
+        default: return "user"; 
+    }
 }

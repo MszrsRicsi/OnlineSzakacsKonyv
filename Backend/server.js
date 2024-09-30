@@ -283,6 +283,42 @@ app.get("/users", (req, res) => {
   });
 });
 
+//delete user by id
+app.delete("/users/:id", (req, res) => {
+  if (!req.params.id) {
+    res.status(203).send('Missing identifier!');
+    return;
+  }
+
+  pool.query(`DELETE FROM users WHERE id = '${req.params.id}'`, (err, results) => {
+    if (err) {
+      res.status(500).send("An error occurred while accessing the database!");
+      return;
+    }
+
+    res.status(202).send("Account deleted!");
+    return;
+  });
+});
+
+//modify user by id
+app.patch("/users/:id", (req, res) => {
+  if (!req.params.id) {
+    res.status(203).send('Missing identifier!');
+    return;
+  }
+
+  pool.query(`UPDATE users SET role = '${req.body.newrole}', status = '${req.body.newstatus}' WHERE id = '${req.params.id}'`, (err, results) => {
+    if (err) {
+      res.status(500).send("An error occurred while accessing the database!");
+      return;
+    }
+
+    res.status(202).send("Account modified!");
+    return;
+  });
+});
+
 app.listen(process.env.PORT, () => {
   console.clear();
   console.log(`Server is listening on port ${process.env.PORT}.`);
