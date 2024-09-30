@@ -1,16 +1,24 @@
 <div>
     <h2 class="mb-3 mt-3">Profile</h2>
 
-    <div class="form-floating mb-3">
-        <input type="text" class="form-control" id="newname" placeholder="">
-        <label for="username">New name</label>
-    </div>
-
+    <hr>
+    <h5 class="mb-3 mt-3">Email</h5>
     <div class="form-floating mb-3">
         <input type="email" class="form-control" id="newemail" placeholder="name@example.com">
         <label for="email">New email address</label>
     </div>
+    <button class="btn btn-primary mb-3" onclick="updateEmail()">Update email address</button>
 
+    <hr>
+    <h5 class="mb-3 mt-3">Phone number</h5>
+    <div class="form-floating mb-3">
+        <input type="text" class="form-control" id="newphone" placeholder="">
+        <label for="phone">New phone number</label>
+    </div>
+    <button class="btn btn-primary mb-3" onclick="updatePhone()">Update phone number</button>
+
+    <hr>
+    <h5 class="mb-3 mt-3">Password</h5>
     <div class="form-floating mb-3">
         <input type="password" class="form-control" id="oldpasswd" placeholder="Old password">
         <label for="passwd">Old password</label>
@@ -25,6 +33,7 @@
         <input type="password" class="form-control" id="confirmpasswd" placeholder="Confirm new password">
         <label for="passwd">Confirm password</label>
     </div>
-
-    <button class="btn btn-primary mb-3" onclick="login()">Login</button>
+    <button class="btn btn-primary mb-3" onclick="updatePasswd()">Update password</button>
+    
+    <hr>
 </div>

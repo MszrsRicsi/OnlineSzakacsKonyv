@@ -74,9 +74,15 @@ function getCategories()
 {
     let categories = document.getElementById("category");
     categories.innerHTML = "";
-    let selectText = document.createElement("option")
+
+    let filter = document.getElementById('filter');
+    let selectText = document.createElement("option");
     selectText.innerText = "Select a category..";
     categories.appendChild(selectText);
+
+    let selectText2 = document.createElement("option");
+    selectText2.innerText = "All categories";
+    filter.appendChild(selectText2);
 
     axios.get(`${serverUrl}/categories`).then(res => {
         res.data.forEach(item => {
@@ -84,6 +90,11 @@ function getCategories()
             option.innerHTML = item.name;
             option.value = item.id;
             categories.appendChild(option);
+
+            let option2 = document.createElement("option");
+            option2.innerHTML = item.name;
+            option2.value = item.id;
+            filter.appendChild(option2);
         });
     });
 };
@@ -115,3 +126,24 @@ function addRecipe()
         }
     });
 };
+
+function sortByCategory() {
+
+    let filter = document.getElementById("filter")
+
+    let recipesContainer=document.querySelector(".recipesContainer")
+    recipesContainer.innerHTML="";
+
+    axios.get(`${serverUrl}/recipes`).then(res => {
+        for (let i = 0; i < res.data.length; i++) {
+
+            if (filter.value == res.data[i].catID){
+                CreateRecipeCards(res.data[i]);
+            }
+            
+        }
+    });
+    if (filter.selectedIndex==0) {
+        getRecipes()
+    }
+}
