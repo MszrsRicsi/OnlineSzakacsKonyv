@@ -15,6 +15,9 @@ async function render(view){
         case "users":
             showUsers();
             break;
+        case "statistics":
+            getStats()
+            break;
     }
 };
 

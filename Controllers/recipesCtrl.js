@@ -265,3 +265,35 @@ function DeleteCard(data)
         });
     }
 };
+
+
+function getStats(){
+    axios.get(`${serverUrl}/recipes`).then(res => {
+        let totalCalories = 0;
+        let totalTime = 0;
+
+        res.data.forEach(item => {
+            totalCalories += item.calorie;
+            totalTime += item.time;
+        });
+
+        let avgCalories = Math.round(totalCalories / res.data.length);
+        let avgTime = Math.round(totalTime / res.data.length);
+
+        let statsTable = document.querySelector("#statsTable");
+        let tr = document.createElement("tr");
+    
+        let td1 = document.createElement("td");
+        let td2 = document.createElement("td");
+
+        td2.classList.add("text-end");
+        
+        td1.innerHTML = avgCalories;
+        td2.innerHTML = avgTime;
+    
+        tr.appendChild(td1);
+        tr.appendChild(td2);
+    
+        statsTable.appendChild(tr);
+    });
+}

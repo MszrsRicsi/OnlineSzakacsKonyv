@@ -1,6 +1,6 @@
 function showUsers()
 {
-    let tbody = document.querySelector("tbody");
+    let tbody = document.querySelector("#usersTable");
     tbody.innerHTML = "";
 
     axios.get(`${serverUrl}/users`, authorize()).then(res => {
