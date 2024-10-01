@@ -13,7 +13,7 @@ function CreateRecipeCards(data)
 {   
     //Creating elements
 
-    let container = document.querySelector(".recipesContainer")
+    let container = document.querySelector(".recipesContainer");
     let card = document.createElement("div");
 
     let headerTitle = document.createElement("div");
@@ -65,7 +65,30 @@ function CreateRecipeCards(data)
     additions.classList.add("textIndent");
  
     card.appendChild(additionsTitle);
-    card.append(additions);
+    card.appendChild(additions);
+
+    if (data.userID == loggedUser[0].id || loggedUser[0].role == "admin")
+    {
+        let buttonContainer = document.createElement("div");
+        buttonContainer.classList.add("d-flex", "justify-content-center", "mb-3");
+
+        let cardModifyBTN = document.createElement("button");
+        cardModifyBTN.classList.add("btn", "btn-warning");
+        cardModifyBTN.innerHTML = "Modify";
+        cardModifyBTN.setAttribute("data-bs-toggle", "modal");
+        cardModifyBTN.setAttribute("data-bs-target", "#exampleModal");
+        cardModifyBTN.onclick = function() {ModifyCard(data)};
+    
+        let cardDeleteBTN = document.createElement("button");
+        cardDeleteBTN.classList.add("btn", "btn-danger", "me-1");
+        cardDeleteBTN.innerHTML = "Delete";
+        cardDeleteBTN.onclick = function() {DeleteCard(data)};
+    
+        buttonContainer.appendChild(cardDeleteBTN);
+        buttonContainer.appendChild(cardModifyBTN);
+    
+        card.appendChild(buttonContainer);
+    }
 
     container.appendChild(card);
 };
@@ -127,23 +150,62 @@ function addRecipe()
     });
 };
 
-function sortByCategory() {
+function Filter()
+{
+    let categories = document.getElementById("filter");
+    let showMyRecipes = document.getElementById("showMyRecipes");
 
-    let filter = document.getElementById("filter")
+    let recipesContainer = document.querySelector(".recipesContainer");
+    recipesContainer.innerHTML = "";
 
-    let recipesContainer=document.querySelector(".recipesContainer")
-    recipesContainer.innerHTML="";
-
-    axios.get(`${serverUrl}/recipes`).then(res => {
-        for (let i = 0; i < res.data.length; i++) {
-
-            if (filter.value == res.data[i].catID){
-                CreateRecipeCards(res.data[i]);
+    if (showMyRecipes.selectedIndex == 0)
+    {
+        axios.get(`${serverUrl}/recipes`).then(res => {
+            if (categories.selectedIndex == 0)
+            {
+                res.data.forEach(item => {
+                    CreateRecipeCards(item);
+                });
             }
-            
-        }
-    });
-    if (filter.selectedIndex==0) {
-        getRecipes()
+            else
+            {
+                res.data.forEach(item => {
+                    if (item.catID == categories.value)
+                    {
+                        CreateRecipeCards(item);
+                    }
+                });
+            }
+        });
+    }
+    else
+    {
+        axios.get(`${serverUrl}/recipes/${loggedUser[0].id}`).then(res => {
+            if (categories.selectedIndex == 0)
+            {
+                res.data.forEach(item => {
+                    CreateRecipeCards(item);
+                });
+            }
+            else
+            {
+                res.data.forEach(item => {
+                    if (item.catID == categories.value)
+                    {
+                        CreateRecipeCards(item);
+                    }
+                });
+            }
+        });
     }
 }
+
+function ModifyCard(data)
+{
+
+};
+
+function DeleteCard(data)
+{
+
+};

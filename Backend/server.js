@@ -319,6 +319,24 @@ app.patch("/users/:id", (req, res) => {
   });
 });
 
+//get recipes by user id
+app.get("/recipes/:userID", (req, res) => {
+  if (!req.params.userID) {
+    res.status(203).send('Missing identifier!');
+    return;
+  }
+
+  pool.query(`SELECT * FROM recipes WHERE userID = '${req.params.userID}'`, (err, results) => {
+    if (err) {
+      res.status(500).send("An error occurred while accessing the database!");
+      return;
+    }
+
+    res.status(202).send(results);
+    return;
+  });
+});
+
 app.listen(process.env.PORT, () => {
   console.clear();
   console.log(`Server is listening on port ${process.env.PORT}.`);

@@ -44,8 +44,13 @@
     </div>
 </div>
 
-<div class="form-floating ms-1 p-3">
-    <select class="form-select p-3" id="filter" onchange="sortByCategory()">
+<div class="form-floating ms-1 p-3 d-flex">
+    <select class="form-select p-3 flex-fill me-2" id="filter" onchange="Filter()">
+    </select>
+
+    <select class="form-select p-3 flex-fill" id="showMyRecipes" onchange="Filter()">
+        <option selected value="0">Everyone's recipes</option>
+        <option value="1">My recipes</option>
     </select>
 </div>
 
