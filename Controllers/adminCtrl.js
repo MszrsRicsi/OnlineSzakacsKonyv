@@ -3,7 +3,7 @@ function showUsers()
     let tbody = document.querySelector("tbody");
     tbody.innerHTML = "";
 
-    axios.get(`${serverUrl}/users`).then(res => {
+    axios.get(`${serverUrl}/users`, authorize()).then(res => {
         res.data.forEach(user => {
             let tr = document.createElement("tr");
             tr.style = "height: 50px"
@@ -62,7 +62,7 @@ function ModifyUser(user)
         newstatus: document.querySelector("#statusModal").value
     };
 
-    axios.patch(`${serverUrl}/users/${user.id}`, newDatas).then(res => {
+    axios.patch(`${serverUrl}/users/${user.id}`, newDatas, authorize()).then(res => {
         alert(res.data);
         
         if (res.status == 202)
@@ -76,7 +76,7 @@ function Delete(user)
 {
     if (confirm("Are you sure?"))
     {
-        axios.delete(`${serverUrl}/users/${user.id}`).then(res => {
+        axios.delete(`${serverUrl}/users/${user.id}`, authorize()).then(res => {
             alert(res.data);
 
             if (res.status == 202)

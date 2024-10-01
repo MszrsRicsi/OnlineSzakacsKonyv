@@ -138,3 +138,10 @@ function toggleAddRecipeVisibility()
         newRecipe.classList.remove("d-none");
     }
 }
+
+function authorize(){
+    let res = {
+         headers: { "Authorization": loggedUser[0].id }
+    }
+    return res;
+}

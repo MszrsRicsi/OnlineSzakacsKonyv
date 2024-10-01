@@ -103,7 +103,7 @@ app.post('/login', (req, res) => {
 });
 
 //user profile editing (password)
-app.patch('/passwd/:id', (req, res) => {
+app.patch('/passwd/:id', logincheck, (req, res) => {
 
   if (!req.params.id) {
     res.status(203).send('Missing identifier!');
@@ -159,7 +159,7 @@ app.patch('/passwd/:id', (req, res) => {
 });
 
 //user profile editing (phone)
-app.patch('/phone/:id', (req, res)=>{
+app.patch('/phone/:id', logincheck, (req, res)=>{
 
   if (!req.params.id) {
     res.status(203).send('Missing identifier!');
@@ -183,7 +183,7 @@ app.patch('/phone/:id', (req, res)=>{
 });
 
 //user profile editing (email)
-app.patch('/email/:id', (req, res) => {
+app.patch('/email/:id', logincheck, (req, res) => {
   
   if (!req.params.id) {
     res.status(203).send('Missing identifier!');
@@ -258,7 +258,7 @@ app.post('/category', (req, res) => {
 });
 
 //upload new recipe
-app.post("/upload", (req, res) => {
+app.post("/upload", logincheck, (req, res) => {
   if (!req.body.userID)
   {
     res.status(203).send("Missing identifier!");
@@ -283,7 +283,7 @@ app.post("/upload", (req, res) => {
 });
 
 //get all users
-app.get("/users", (req, res) => {
+app.get("/users", logincheck, admincheck, (req, res) => {
   pool.query(`SELECT id, name, role, status FROM users`, (err, results) => {
     if (err) {
       res.status(500).send("An error occurred while accessing the database!");
@@ -296,7 +296,7 @@ app.get("/users", (req, res) => {
 });
 
 //delete user by id
-app.delete("/users/:id", (req, res) => {
+app.delete("/users/:id", logincheck, admincheck, (req, res) => {
   if (!req.params.id) {
     res.status(203).send('Missing identifier!');
     return;
@@ -314,7 +314,7 @@ app.delete("/users/:id", (req, res) => {
 });
 
 //modify user by id
-app.patch("/users/:id", (req, res) => {
+app.patch("/users/:id", logincheck, admincheck, (req, res) => {
   if (!req.params.id) {
     res.status(203).send('Missing identifier!');
     return;
@@ -338,7 +338,7 @@ app.patch("/users/:id", (req, res) => {
 });
 
 //get recipes by user id
-app.get("/recipes/:userID", (req, res) => {
+app.get("/recipes/:userID", logincheck, (req, res) => {
   if (!req.params.userID) {
     res.status(203).send('Missing identifier!');
     return;
@@ -356,7 +356,7 @@ app.get("/recipes/:userID", (req, res) => {
 });
 
 //modify recipes by id
-app.patch("/recipes/:id", (req, res) => {
+app.patch("/recipes/:id", logincheck, (req, res) => {
   if (!req.params.id) {
     res.status(203).send('Missing identifier!');
     return;
@@ -380,7 +380,7 @@ app.patch("/recipes/:id", (req, res) => {
 });
 
 //delete recipe by id
-app.delete("/recipes/:id", (req, res) => {
+app.delete("/recipes/:id", logincheck, (req, res) => {
   if (!req.params.id) {
     res.status(203).send('Missing identifier!');
     return;
@@ -396,6 +396,55 @@ app.delete("/recipes/:id", (req, res) => {
     return;
   });
 });
+
+
+// MIDDLEWARE functions
+
+//checking if someone is logged in
+function logincheck(req, res, next){
+  let token = req.header('Authorization');
+  
+  if (!token){
+    res.status(400).send('Jelentkezz be!');
+    return;
+  }
+
+  pool.query(`SELECT * FROM users WHERE id = '${token}'`, (err, results) => {
+    if (results.length == 0){
+      res.status(400).send('Hibás authentikáció!');
+      return;
+    } 
+
+    next();
+  });
+
+  return;
+}
+
+//checking for permissions
+function admincheck(req, res, next){
+  let token = req.header('Authorization');
+  
+  if (!token){
+    res.status(400).send('Jelentkezz be!');
+    return;
+  }
+
+  pool.query(`SELECT role FROM users WHERE id = '${token}'`, (err, results) => {
+    if (results.length == 0){
+      res.status(400).send('Hibás authentikáció!');
+      return;
+    } 
+    if (results[0].role != 'admin'){
+      res.status(400).send('Nincs jogosultságod!');
+      return;
+    }
+    next();
+  });
+
+  return;
+}
+
 
 app.listen(process.env.PORT, () => {
   console.clear();

@@ -155,7 +155,7 @@ function addRecipe()
         additions: document.querySelector("#additions").value
     };
 
-    axios.post(`${serverUrl}/upload`, recipe).then(res => {
+    axios.post(`${serverUrl}/upload`, recipe, authorize()).then(res => {
         alert(res.data);
 
         if(res.status == 200)
@@ -196,23 +196,26 @@ function Filter()
     }
     else
     {
-        axios.get(`${serverUrl}/recipes/${loggedUser[0].id}`).then(res => {
-            if (categories.selectedIndex == 0)
-            {
-                res.data.forEach(item => {
-                    CreateRecipeCards(item);
-                });
-            }
-            else
-            {
-                res.data.forEach(item => {
-                    if (item.catID == categories.value)
-                    {
+        if (loggedUser)
+        {
+            axios.get(`${serverUrl}/recipes/${loggedUser[0].id}`, authorize()).then(res => {
+                if (categories.selectedIndex == 0)
+                {
+                    res.data.forEach(item => {
                         CreateRecipeCards(item);
-                    }
-                });
-            }
-        });
+                    });
+                }
+                else
+                {
+                    res.data.forEach(item => {
+                        if (item.catID == categories.value)
+                        {
+                            CreateRecipeCards(item);
+                        }
+                    });
+                }
+            });
+        }
     }
 }
 
@@ -237,7 +240,7 @@ function ModifyCard(data)
         newAdditions: document.querySelector("#additionsModal").value
     }
 
-    axios.patch(`${serverUrl}/recipes/${data.id}`, newData).then(res => {
+    axios.patch(`${serverUrl}/recipes/${data.id}`, newData, authorize()).then(res => {
         alert(res.data);
 
         if(res.status == 200)
@@ -252,7 +255,7 @@ function DeleteCard(data)
 {
     if (confirm("Are you sure?"))
     {
-        axios.delete(`${serverUrl}/recipes/${data.id}`).then(res => {
+        axios.delete(`${serverUrl}/recipes/${data.id}`, authorize()).then(res => {
             alert(res.data);
     
             if (res.status == 202)

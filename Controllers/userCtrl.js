@@ -6,7 +6,7 @@ function updatePasswd() {
         confirmpasswd: document.querySelector("#confirmpasswd").value
     }
 
-    axios.patch(`${serverUrl}/passwd/${loggedUser[0].id}`, passwdDatas).then(res =>{
+    axios.patch(`${serverUrl}/passwd/${loggedUser[0].id}`, passwdDatas, authorize()).then(res =>{
         alert(res.data);
 
         if (res.status == 200) {
@@ -23,7 +23,7 @@ function updatePhone() {
         newphone: document.querySelector("#newphone").value
     }
 
-    axios.patch(`${serverUrl}/phone/${loggedUser[0].id}`, phoneDatas).then(res =>{
+    axios.patch(`${serverUrl}/phone/${loggedUser[0].id}`, phoneDatas, authorize()).then(res =>{
         alert(res.data);
 
         if (res.status == 200) {
@@ -38,7 +38,7 @@ function updateEmail() {
         newemail: document.querySelector("#newemail").value
     }
 
-    axios.patch(`${serverUrl}/email/${loggedUser[0].id}`, emailDatas).then(res =>{
+    axios.patch(`${serverUrl}/email/${loggedUser[0].id}`, emailDatas, authorize()).then(res =>{
         alert(res.data);
 
         if (res.status == 200) {
