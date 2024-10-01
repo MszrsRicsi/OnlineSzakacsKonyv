@@ -26,7 +26,7 @@ function showUsers()
                 modifyBTN.innerHTML = "Modify";
                 modifyBTN.setAttribute("data-bs-toggle", "modal");
                 modifyBTN.setAttribute("data-bs-target", "#exampleModal");
-                modifyBTN.onclick = function() {ModifyPopUp(user)};
+                modifyBTN.onclick = function() {ModifyUserPopUp(user)};
     
                 let deleteBTN = document.createElement("button");
                 deleteBTN.classList.add("btn", "btn-danger");
@@ -46,17 +46,16 @@ function showUsers()
     });
 }
 
-function ModifyPopUp(user)
+function ModifyUserPopUp(user)
 {
-    console.log(user.role);
     document.querySelector("#roleModal").value = user.role;
     document.querySelector("#statusModal").value = user.status;
 
-    document.querySelector("#modalSaveBTN").onclick = function() {Modify(user)};
+    document.querySelector("#modalUserSaveBTN").onclick = function() {ModifyUser(user)};
 
 }
 
-function Modify(user)
+function ModifyUser(user)
 {
     let newDatas = {
         newrole: SwitchOnRole(document.querySelector("#roleModal").selectedIndex),

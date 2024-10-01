@@ -57,3 +57,46 @@
 <div class="recipesContainer">
 
 </div>
+
+  <!-- Modal -->
+<div class="modal fade" id="recipeModal" tabindex="-1" aria-labelledby="recipeModal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="recipeModalLabel">Modify recipe</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
+                <div class="form-floating mb-3">
+                    <input type="text" class="form-control" maxlength="25" id="titleModal" placeholder="Title">
+                    <label for="title">Title</label>
+                </div>
+
+                <label for="categoryModal">Category</label>
+                <select class="form-select mb-3" id="categoryModal">
+                </select>
+
+                <div class="form-floating mb-3">
+                    <input type="number" class="form-control" id="timeModal" placeholder="Time">
+                    <label for="timeModal">Time (min)</label>
+                </div>
+
+                <div class="form-floating mb-3">
+                    <input type="number" class="form-control" id="caloriesModal" placeholder="Calories">
+                    <label for="caloriesModal">Calories</label>
+                </div>
+
+                <div class="form-floating mb-3">
+                    <input type="text" class="form-control" maxlength="50" id="additionsModal" placeholder="Additions">
+                    <label for="additionsModal">Additions</label>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="modalCardSaveBTN">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>

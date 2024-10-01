@@ -190,6 +190,12 @@ app.patch('/email/:id', (req, res) => {
     return;
   }
 
+  if (!req.body.newemail)
+  {
+    res.status(203).send("Missing fields!");
+    return;
+  }
+
   pool.query(`UPDATE users SET email = '${req.body.newemail}' WHERE id = '${req.params.id}'`, (err, results) => {
     if (err) {
       res.status(500).send('An error occurred while accessing the database!');
@@ -253,11 +259,17 @@ app.post('/category', (req, res) => {
 
 //upload new recipe
 app.post("/upload", (req, res) => {
+  if (!req.body.userID)
+  {
+    res.status(203).send("Missing identifier!");
+    return;
+  }
+
   if (!req.body.category || !req.body.title || !req.body.time || !req.body.additions || !req.body.calories)
   {
     res.status(203).send("Missing fields!");
     return;
-  };
+  }
 
   pool.query(`INSERT INTO recipes VALUES ('', '${req.body.category}', '${req.body.userID}', '${req.body.title}', '', '${req.body.time}', '${req.body.additions}', '${req.body.calories}')`, (err, results) => {
     if (err) {
@@ -308,6 +320,12 @@ app.patch("/users/:id", (req, res) => {
     return;
   }
 
+  if (!req.body.newrole || !req.body.newstatus)
+  {
+      res.status(203).send("Missing fields!");
+      return;
+  }
+
   pool.query(`UPDATE users SET role = '${req.body.newrole}', status = '${req.body.newstatus}' WHERE id = '${req.params.id}'`, (err, results) => {
     if (err) {
       res.status(500).send("An error occurred while accessing the database!");
@@ -333,6 +351,48 @@ app.get("/recipes/:userID", (req, res) => {
     }
 
     res.status(202).send(results);
+    return;
+  });
+});
+
+//modify recipes by id
+app.patch("/recipes/:id", (req, res) => {
+  if (!req.params.id) {
+    res.status(203).send('Missing identifier!');
+    return;
+  }
+
+  if (!req.body.newCatID || !req.body.newTitle || !req.body.newTime || !req.body.newCalorie || !req.body.newAdditions)
+  {
+    res.status(203).send("Missing fields!");
+    return;
+  }
+
+  pool.query(`UPDATE recipes SET catID = '${req.body.newCatID}', title = '${req.body.newTitle}', time = '${req.body.newTime}', calorie = '${req.body.newCalorie}', additions = '${req.body.newAdditions}' WHERE id = '${req.params.id}'`, (err, results) => {
+    if (err) {
+      res.status(500).send("An error occurred while accessing the database!");
+      return;
+    }
+
+    res.status(200).send("Recipe modified!");
+    return;
+  });
+});
+
+//delete recipe by id
+app.delete("/recipes/:id", (req, res) => {
+  if (!req.params.id) {
+    res.status(203).send('Missing identifier!');
+    return;
+  }
+
+  pool.query(`DELETE FROM recipes WHERE id = '${req.params.id}'`, (err, results) => {
+    if (err) {
+      res.status(500).send("An error occurred while accessing the database!");
+      return;
+    }
+
+    res.status(202).send("Recipe deleted!");
     return;
   });
 });

@@ -1,5 +1,8 @@
 function getRecipes()
 {
+    let container = document.querySelector(".recipesContainer");
+    container.innerHTML = "";
+
     axios.get(`${serverUrl}/recipes`).then(res => {
         for (let i = 0; i < res.data.length; i++) {
             CreateRecipeCards(res.data[i]);
@@ -67,27 +70,30 @@ function CreateRecipeCards(data)
     card.appendChild(additionsTitle);
     card.appendChild(additions);
 
-    if (data.userID == loggedUser[0].id || loggedUser[0].role == "admin")
+    if (loggedUser)
     {
-        let buttonContainer = document.createElement("div");
-        buttonContainer.classList.add("d-flex", "justify-content-center", "mb-3");
-
-        let cardModifyBTN = document.createElement("button");
-        cardModifyBTN.classList.add("btn", "btn-warning");
-        cardModifyBTN.innerHTML = "Modify";
-        cardModifyBTN.setAttribute("data-bs-toggle", "modal");
-        cardModifyBTN.setAttribute("data-bs-target", "#exampleModal");
-        cardModifyBTN.onclick = function() {ModifyCard(data)};
-    
-        let cardDeleteBTN = document.createElement("button");
-        cardDeleteBTN.classList.add("btn", "btn-danger", "me-1");
-        cardDeleteBTN.innerHTML = "Delete";
-        cardDeleteBTN.onclick = function() {DeleteCard(data)};
-    
-        buttonContainer.appendChild(cardDeleteBTN);
-        buttonContainer.appendChild(cardModifyBTN);
-    
-        card.appendChild(buttonContainer);
+        if (data.userID == loggedUser[0].id || loggedUser[0].role == "admin")
+            {
+                let buttonContainer = document.createElement("div");
+                buttonContainer.classList.add("d-flex", "justify-content-center", "mb-3");
+        
+                let cardModifyBTN = document.createElement("button");
+                cardModifyBTN.classList.add("btn", "btn-warning");
+                cardModifyBTN.innerHTML = "Modify";
+                cardModifyBTN.setAttribute("data-bs-toggle", "modal");
+                cardModifyBTN.setAttribute("data-bs-target", "#recipeModal");
+                cardModifyBTN.onclick = function() {ModifyCardPopUp(data)};
+            
+                let cardDeleteBTN = document.createElement("button");
+                cardDeleteBTN.classList.add("btn", "btn-danger", "me-1");
+                cardDeleteBTN.innerHTML = "Delete";
+                cardDeleteBTN.onclick = function() {DeleteCard(data)};
+            
+                buttonContainer.appendChild(cardDeleteBTN);
+                buttonContainer.appendChild(cardModifyBTN);
+            
+                card.appendChild(buttonContainer);
+            }
     }
 
     container.appendChild(card);
@@ -99,6 +105,11 @@ function getCategories()
     categories.innerHTML = "";
 
     let filter = document.getElementById('filter');
+    filter.innerHTML = "";
+
+    let modalCategories = document.getElementById("categoryModal");
+    modalCategories.innerHTML = "";
+
     let selectText = document.createElement("option");
     selectText.innerText = "Select a category..";
     categories.appendChild(selectText);
@@ -118,6 +129,11 @@ function getCategories()
             option2.innerHTML = item.name;
             option2.value = item.id;
             filter.appendChild(option2);
+
+            let option3 = document.createElement("option");
+            option3.innerHTML = item.name;
+            option3.value = item.id;
+            modalCategories.appendChild(option3);
         });
     });
 };
@@ -200,12 +216,49 @@ function Filter()
     }
 }
 
+function ModifyCardPopUp(data)
+{
+    document.querySelector("#titleModal").value = data.title;
+    document.querySelector("#categoryModal").selectedIndex = data.catID - 1;
+    document.querySelector("#timeModal").value = data.time;
+    document.querySelector("#caloriesModal").value = data.calorie;
+    document.querySelector("#additionsModal").value = data.additions;
+
+    document.querySelector("#modalCardSaveBTN").onclick = function() {ModifyCard(data)};
+};
+
 function ModifyCard(data)
 {
+    let newData = {
+        newCatID: document.querySelector("#categoryModal").selectedIndex + 1,
+        newTitle: document.querySelector("#titleModal").value,
+        newTime: document.querySelector("#timeModal").value,
+        newCalorie: document.querySelector("#caloriesModal").value,
+        newAdditions: document.querySelector("#additionsModal").value
+    }
 
-};
+    axios.patch(`${serverUrl}/recipes/${data.id}`, newData).then(res => {
+        alert(res.data);
+
+        if(res.status == 200)
+        {
+            document.querySelector(".recipesContainer").innerHTML = "";
+            getRecipes();
+        }
+    });
+}
 
 function DeleteCard(data)
 {
-
+    if (confirm("Are you sure?"))
+    {
+        axios.delete(`${serverUrl}/recipes/${data.id}`).then(res => {
+            alert(res.data);
+    
+            if (res.status == 202)
+            {
+                getRecipes();
+            }
+        });
+    }
 };
