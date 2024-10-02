@@ -161,6 +161,12 @@ function addRecipe()
         if(res.status == 200)
         {
             document.querySelector(".recipesContainer").innerHTML = "";
+
+            document.querySelector("#title").value = "";
+            document.querySelector("#category").value = "";
+            document.querySelector("#time").value = "";
+            document.querySelector("#calories").value = "";
+            document.querySelector("#additions").value = "";
             getRecipes();
         }
     });
